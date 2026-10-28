@@ -1,0 +1,46 @@
+# ============================================================
+# V13: PLE + PPNet LHUC Gates 实验
+# ============================================================
+# 在 PLE (V5 配置) 的 Task Tower 中注入 PPNet 风格的 LHUC 动态门控
+# 门控由用户侧特征生成: user_id, user_active_degree, is_live_streamer,
+#   is_video_author, is_lowactive_period, follow_user_num_range,
+#   fans_user_num_range, friend_user_num_range, register_days_range
+# 对比基线: PLE V5 (test avg AUC=0.695)
+# ============================================================
+
+PLE_v13_KuaiRand1K:
+    model: PLE_v13
+    dataset_id: KuaiRand1K
+    task_labels: ['is_click', 'is_like', 'is_follow', 'is_comment', 'is_forward', 'long_view', 'is_hate', 'is_profile_enter']
+    loss: ['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
+    loss_weight: [1.0, 2.0, 3.0, 3.0, 3.0, 1.5, 1.0, 2.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification']
+    num_tasks: 8
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    num_layers: 2
+    num_shared_experts: 4
+    num_specific_experts: 2
+    expert_hidden_units: [512, 256, 128]
+    gate_hidden_units: [128, 64]
+    tower_hidden_units: [128, 64]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True

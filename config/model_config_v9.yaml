@@ -1,0 +1,114 @@
+# ============================================================
+# V9: PLE + Balance Loss (λ=0.002)
+# ============================================================
+# 基线: V6 (λ=0.01) 过强, V8 (λ=0.001) 偏保守
+# 目的: 0.002 是 Claude 推荐的单次最佳值, 在 0.001 和 0.01 之间
+#       比 0.001 防极化更稳, 又远低于 0.01 的破坏性阈值
+# 模型: PLE_v6
+# ============================================================
+
+SharedBottom_KuaiRand1K:
+    model: SharedBottom
+    dataset_id: KuaiRand1K
+    task_labels: ['is_click', 'is_like', 'is_follow', 'is_comment', 'is_forward', 'long_view', 'is_hate', 'is_profile_enter']
+    loss: ['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
+    loss_weight: [1.0, 2.0, 3.0, 3.0, 3.0, 1.5, 1.0, 2.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification']
+    num_tasks: 8
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    bottom_hidden_units: [512, 512, 512]
+    tower_hidden_units: [128, 128]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True
+
+MMoE_KuaiRand1K:
+    model: MMoE
+    dataset_id: KuaiRand1K
+    task_labels: ['is_click', 'is_like', 'is_follow', 'is_comment', 'is_forward', 'long_view', 'is_hate', 'is_profile_enter']
+    loss: ['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
+    loss_weight: [1.0, 2.0, 3.0, 3.0, 3.0, 1.5, 1.0, 2.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification']
+    num_tasks: 8
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    num_experts: 8
+    expert_hidden_units: [512, 256, 128]
+    gate_hidden_units: [128, 64]
+    tower_hidden_units: [128, 64]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True
+
+PLE_KuaiRand1K:
+    model: PLE_v6
+    dataset_id: KuaiRand1K
+    task_labels: ['is_click', 'is_like', 'is_follow', 'is_comment', 'is_forward', 'long_view', 'is_hate', 'is_profile_enter']
+    loss: ['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
+    loss_weight: [1.0, 2.0, 3.0, 3.0, 3.0, 1.5, 1.0, 2.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification']
+    num_tasks: 8
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    num_layers: 2
+    num_shared_experts: 4
+    num_specific_experts: 2
+    expert_hidden_units: [512, 256, 128]
+    gate_hidden_units: [128, 64]
+    tower_hidden_units: [128, 64]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True
+    balance_loss_weight: 0.002

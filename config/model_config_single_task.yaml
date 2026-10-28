@@ -1,0 +1,269 @@
+# ============================================================
+# Single-Task Baselines: SharedBottom with num_tasks=1
+# 用于与 MTL 模型对比，计算 MTL Gain
+# 架构与 MTL SharedBottom 完全一致，仅输出 tower 数量不同
+# ============================================================
+
+SingleTask_click:
+    model: SharedBottom
+    dataset_id: KuaiRand1K
+    task_labels: ['is_click']
+    loss: ['binary_crossentropy']
+    loss_weight: [1.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification']
+    num_tasks: 1
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    bottom_hidden_units: [512, 512, 512]
+    tower_hidden_units: [128, 128]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True
+
+SingleTask_like:
+    model: SharedBottom
+    dataset_id: KuaiRand1K
+    task_labels: ['is_like']
+    loss: ['binary_crossentropy']
+    loss_weight: [1.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification']
+    num_tasks: 1
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    bottom_hidden_units: [512, 512, 512]
+    tower_hidden_units: [128, 128]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True
+
+SingleTask_follow:
+    model: SharedBottom
+    dataset_id: KuaiRand1K
+    task_labels: ['is_follow']
+    loss: ['binary_crossentropy']
+    loss_weight: [1.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification']
+    num_tasks: 1
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    bottom_hidden_units: [512, 512, 512]
+    tower_hidden_units: [128, 128]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True
+
+SingleTask_comment:
+    model: SharedBottom
+    dataset_id: KuaiRand1K
+    task_labels: ['is_comment']
+    loss: ['binary_crossentropy']
+    loss_weight: [1.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification']
+    num_tasks: 1
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    bottom_hidden_units: [512, 512, 512]
+    tower_hidden_units: [128, 128]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True
+
+SingleTask_forward:
+    model: SharedBottom
+    dataset_id: KuaiRand1K
+    task_labels: ['is_forward']
+    loss: ['binary_crossentropy']
+    loss_weight: [1.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification']
+    num_tasks: 1
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    bottom_hidden_units: [512, 512, 512]
+    tower_hidden_units: [128, 128]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True
+
+SingleTask_longview:
+    model: SharedBottom
+    dataset_id: KuaiRand1K
+    task_labels: ['long_view']
+    loss: ['binary_crossentropy']
+    loss_weight: [1.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification']
+    num_tasks: 1
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    bottom_hidden_units: [512, 512, 512]
+    tower_hidden_units: [128, 128]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True
+
+SingleTask_hate:
+    model: SharedBottom
+    dataset_id: KuaiRand1K
+    task_labels: ['is_hate']
+    loss: ['binary_crossentropy']
+    loss_weight: [1.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification']
+    num_tasks: 1
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    bottom_hidden_units: [512, 512, 512]
+    tower_hidden_units: [128, 128]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True
+
+SingleTask_profile:
+    model: SharedBottom
+    dataset_id: KuaiRand1K
+    task_labels: ['is_profile_enter']
+    loss: ['binary_crossentropy']
+    loss_weight: [1.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification']
+    num_tasks: 1
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    bottom_hidden_units: [512, 512, 512]
+    tower_hidden_units: [128, 128]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True

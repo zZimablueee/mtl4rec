@@ -1,0 +1,101 @@
+SharedBottom_KuaiRand1K:
+    model: SharedBottom
+    dataset_id: KuaiRand1K
+    task_labels: ['is_click', 'is_like']
+    loss: ['binary_crossentropy', 'binary_crossentropy']
+    loss_weight: [1.0, 5.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification', 'binary_classification']
+    num_tasks: 2
+    optimizer: adam
+    learning_rate: 1.e-4
+    bottom_hidden_units: [512, 512, 512]
+    tower_hidden_units: [128, 128]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: False
+    net_dropout: 0
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 20
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 2
+    save_best_only: True
+
+MMoE_KuaiRand1K:
+    model: MMoE
+    dataset_id: KuaiRand1K
+    task_labels: ['is_click', 'is_like']
+    loss: ['binary_crossentropy', 'binary_crossentropy']
+    loss_weight: [1.0, 5.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification', 'binary_classification']
+    num_tasks: 2
+    optimizer: adam
+    learning_rate: 1.e-4
+    num_experts: 4
+    expert_hidden_units: [512, 256, 128]
+    gate_hidden_units: [128, 64]
+    tower_hidden_units: [128, 64]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: False
+    net_dropout: 0
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 20
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 2
+    save_best_only: True
+
+PLE_KuaiRand1K:
+    model: PLE
+    dataset_id: KuaiRand1K
+    task_labels: ['is_click', 'is_like']
+    loss: ['binary_crossentropy', 'binary_crossentropy']
+    loss_weight: [1.0, 5.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification', 'binary_classification']
+    num_tasks: 2
+    optimizer: adam
+    learning_rate: 1.e-4
+    num_layers: 1
+    num_shared_experts: 4
+    num_specific_experts: 1
+    expert_hidden_units: [512, 256, 128]
+    gate_hidden_units: [128, 64]
+    tower_hidden_units: [128, 64]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: False
+    net_dropout: 0
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 20
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 2
+    save_best_only: True

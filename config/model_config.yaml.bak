@@ -1,0 +1,337 @@
+# ============================================================
+# V12: PLE + Balance Loss (λ=0.01) + Uncertainty Weighting
+# ============================================================
+# 基线: V6 (Balance Loss λ=0.01) + V7 (Uncertainty Weighting)
+# 组合两类方法，验证是否互补
+# 模型: PLE_v12
+# ============================================================
+
+SharedBottom_KuaiRand1K:
+    model: SharedBottom
+    dataset_id: KuaiRand1K
+    task_labels: ['is_click', 'is_like', 'is_follow', 'is_comment', 'is_forward', 'long_view', 'is_hate', 'is_profile_enter']
+    loss: ['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
+    loss_weight: [1.0, 2.0, 3.0, 3.0, 3.0, 1.5, 1.0, 2.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification']
+    num_tasks: 8
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    bottom_hidden_units: [512, 512, 512]
+    tower_hidden_units: [128, 128]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True
+
+MMoE_KuaiRand1K:
+    model: MMoE
+    dataset_id: KuaiRand1K
+    task_labels: ['is_click', 'is_like', 'is_follow', 'is_comment', 'is_forward', 'long_view', 'is_hate', 'is_profile_enter']
+    loss: ['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
+    loss_weight: [1.0, 2.0, 3.0, 3.0, 3.0, 1.5, 1.0, 2.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification']
+    num_tasks: 8
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    num_experts: 8
+    expert_hidden_units: [512, 256, 128]
+    gate_hidden_units: [128, 64]
+    tower_hidden_units: [128, 64]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True
+
+PLE_KuaiRand1K:
+    model: PLE_v12
+    dataset_id: KuaiRand1K
+    task_labels: ['is_click', 'is_like', 'is_follow', 'is_comment', 'is_forward', 'long_view', 'is_hate', 'is_profile_enter']
+    loss: ['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
+    loss_weight: [1.0, 2.0, 3.0, 3.0, 3.0, 1.5, 1.0, 2.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification']
+    num_tasks: 8
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    num_layers: 2
+    num_shared_experts: 4
+    num_specific_experts: 2
+    expert_hidden_units: [512, 256, 128]
+    gate_hidden_units: [128, 64]
+    tower_hidden_units: [128, 64]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True
+    # V12: Balance Loss + Uncertainty Weighting
+    balance_loss_weight: 0.01
+    init_sigma: 1.0
+
+# ============================================================
+# V13: PLE + PPNet LHUC Gates
+# ============================================================
+# 在 PLE (V5 配置) 的 Task Tower 中注入 PPNet 风格的 LHUC 动态门控
+# 门控由用户侧特征生成，实现个性化参数调制
+# 对比基线: PLE_KuaiRand1K (V12, test avg AUC=0.669)
+# ============================================================
+
+PLE_v13_KuaiRand1K:
+    model: PLE_v13
+    dataset_id: KuaiRand1K
+    task_labels: ["is_click", "is_like", "is_follow", "is_comment", "is_forward", "long_view", "is_hate", "is_profile_enter"]
+    loss: ["binary_crossentropy", "binary_crossentropy", "binary_crossentropy", "binary_crossentropy", "binary_crossentropy", "binary_crossentropy", "binary_crossentropy", "binary_crossentropy"]
+    loss_weight: [1.0, 2.0, 3.0, 3.0, 3.0, 1.5, 1.0, 2.0]
+    metrics: ["logloss", "AUC", "gAUC"]
+    task: ["binary_classification", "binary_classification", "binary_classification", "binary_classification", "binary_classification", "binary_classification", "binary_classification", "binary_classification"]
+    num_tasks: 8
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    num_layers: 2
+    num_shared_experts: 4
+    num_specific_experts: 2
+    expert_hidden_units: [512, 256, 128]
+    gate_hidden_units: [128, 64]
+    tower_hidden_units: [128, 64]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: "AUC"
+    monitor_mode: "max"
+    group_id: "user_id"
+    model_root: "./checkpoints"
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True
+
+# ============================================================
+# V2: MMoE + PPNet LHUC Gates
+# ============================================================
+# 在 MMoE (V5 配置) 的 Task Tower 中注入 PPNet 风格的 LHUC 动态门控
+# 门控由用户侧特征生成，实现个性化参数调制
+# 对比基线: MMoE_KuaiRand1K (test avg AUC=0.686)
+# ============================================================
+
+MMoE_v2_KuaiRand1K:
+    model: MMoE_v2
+    dataset_id: KuaiRand1K
+    task_labels: ["is_click", "is_like", "is_follow", "is_comment", "is_forward", "long_view", "is_hate", "is_profile_enter"]
+    loss: ["binary_crossentropy", "binary_crossentropy", "binary_crossentropy", "binary_crossentropy", "binary_crossentropy", "binary_crossentropy", "binary_crossentropy", "binary_crossentropy"]
+    loss_weight: [1.0, 2.0, 3.0, 3.0, 3.0, 1.5, 1.0, 2.0]
+    metrics: ["logloss", "AUC", "gAUC"]
+    task: ["binary_classification", "binary_classification", "binary_classification", "binary_classification", "binary_classification", "binary_classification", "binary_classification", "binary_classification"]
+    num_tasks: 8
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    num_experts: 8
+    expert_hidden_units: [512, 256, 128]
+    gate_hidden_units: [128, 64]
+    tower_hidden_units: [128, 64]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: "AUC"
+    monitor_mode: "max"
+    group_id: "user_id"
+    model_root: "./checkpoints"
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True
+
+
+# ============================================================
+# V14: PLE + User Bias (温和版个性化)
+# ============================================================
+# 只在 Tower 输出 logit 上加用户偏置，不破坏 CGC 专家分工
+# 对比 V13: per-layer gate → 输出层加法偏置
+# 对比基线: PLE V5 (test avg AUC=0.695)
+# 参数: bias_scale=0.1, bias_hidden_units=[64]
+# ============================================================
+
+PLE_v14_KuaiRand1K:
+    model: PLE_v14
+    dataset_id: KuaiRand1K
+    task_labels: ["is_click", "is_like", "is_follow", "is_comment", "is_forward", "long_view", "is_hate", "is_profile_enter"]
+    loss: ["binary_crossentropy", "binary_crossentropy", "binary_crossentropy", "binary_crossentropy", "binary_crossentropy", "binary_crossentropy", "binary_crossentropy", "binary_crossentropy"]
+    loss_weight: [1.0, 2.0, 3.0, 3.0, 3.0, 1.5, 1.0, 2.0]
+    metrics: ["logloss", "AUC", "gAUC"]
+    task: ["binary_classification", "binary_classification", "binary_classification", "binary_classification", "binary_classification", "binary_classification", "binary_classification", "binary_classification"]
+    num_tasks: 8
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    num_layers: 2
+    num_shared_experts: 4
+    num_specific_experts: 2
+    expert_hidden_units: [512, 256, 128]
+    gate_hidden_units: [128, 64]
+    tower_hidden_units: [128, 64]
+    hidden_activations: relu
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: "AUC"
+    monitor_mode: "max"
+    group_id: "user_id"
+    model_root: "./checkpoints"
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True
+    bias_scale: 0.1
+    bias_hidden_units: [64]
+
+PLE_v15_KuaiRand1K:
+    model: PLE_v15
+    dataset_id: KuaiRand1K
+    task_labels: ['is_click', 'is_like', 'is_follow', 'is_comment', 'is_forward', 'long_view', 'is_hate', 'is_profile_enter']
+    loss: ['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
+    loss_weight: [1.0, 2.0, 3.0, 3.0, 3.0, 1.5, 1.0, 2.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification']
+    num_tasks: 8
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    num_layers: 2
+    num_shared_experts: 4
+    num_specific_experts: 2
+    expert_hidden_units: [512, 256, 128]
+    gate_hidden_units: [128, 64]
+    tower_hidden_units: [128, 64]
+    hidden_activations: relu
+    residual_alpha_init: 0.01
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True
+
+# ============================================================
+# V16: PLE + Task-Aware Gated Shared-Expert Residual Connection
+# ============================================================
+# V15 -> V16: sigmoid gate beta_k for selective residual injection
+#   tower_input_k = Gate_k(experts) + sigma(beta_k) * alpha_k * mean(shared_experts)
+# beta_k init: forward=1.5, hate=1.0, comment=-1.0, others=0.0
+# ============================================================
+
+PLE_v16_KuaiRand1K:
+    model: PLE_v16
+    dataset_id: KuaiRand1K
+    task_labels: ['is_click', 'is_like', 'is_follow', 'is_comment', 'is_forward', 'long_view', 'is_hate', 'is_profile_enter']
+    loss: ['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
+    loss_weight: [1.0, 2.0, 3.0, 3.0, 3.0, 1.5, 1.0, 2.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification']
+    num_tasks: 8
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    num_layers: 2
+    num_shared_experts: 4
+    num_specific_experts: 2
+    expert_hidden_units: [512, 256, 128]
+    gate_hidden_units: [128, 64]
+    tower_hidden_units: [128, 64]
+    hidden_activations: relu
+    residual_alpha_init: 0.01
+    residual_gate_init: [0.0, 0.0, 0.0, -1.0, 1.5, 0.0, 1.0, 0.0]
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True

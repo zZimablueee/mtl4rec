@@ -1,0 +1,49 @@
+# ============================================================
+# V15: PLE + CGC Shared-Expert Residual Connection
+# ============================================================
+# 在最后一层 CGC 中，强制每个任务混入 shared expert 均值:
+#   tower_input_k = Gate_k(experts) + alpha_k * mean(shared_experts)
+# alpha_k: per-task learnable scalar, init 0.01
+# 对比基线: PLE V5 (test avg AUC=0.695, forward=0.592)
+# 目标: 修复 forward 边缘化，同时保留 V5 在其他任务上的优势
+# ============================================================
+
+PLE_v15_KuaiRand1K:
+    model: PLE_v15
+    dataset_id: KuaiRand1K
+    task_labels: ['is_click', 'is_like', 'is_follow', 'is_comment', 'is_forward', 'long_view', 'is_hate', 'is_profile_enter']
+    loss: ['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
+    loss_weight: [1.0, 2.0, 3.0, 3.0, 3.0, 1.5, 1.0, 2.0]
+    metrics: ['logloss', 'AUC', 'gAUC']
+    task: ['binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification', 'binary_classification']
+    num_tasks: 8
+    optimizer: adam
+    learning_rate: 5.e-4
+    max_gradient_norm: 5.0
+    # ===== CGC: 与 V5 完全一致 =====
+    num_layers: 2
+    num_shared_experts: 4
+    num_specific_experts: 2
+    expert_hidden_units: [512, 256, 128]
+    gate_hidden_units: [128, 64]
+    tower_hidden_units: [128, 64]
+    hidden_activations: relu
+    # ===== V15 唯一新增: 残差 alpha 初始化 =====
+    residual_alpha_init: 0.01
+    net_regularizer: 0
+    embedding_regularizer: 1.e-6
+    batch_norm: True
+    net_dropout: 0.1
+    batch_size: 4096
+    embedding_dim: 16
+    epochs: 30
+    shuffle: True
+    seed: 2023
+    monitor: 'AUC'
+    monitor_mode: 'max'
+    group_id: 'user_id'
+    model_root: './checkpoints'
+    num_workers: 3
+    verbose: 1
+    early_stop_patience: 8
+    save_best_only: True

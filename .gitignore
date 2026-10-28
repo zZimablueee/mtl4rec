@@ -1,0 +1,29 @@
+# 数据与训练产物（体积过大，不上传，保留目录结构）
+data/*
+!data/.gitkeep
+checkpoints/*
+!checkpoints/.gitkeep
+results/*
+!results/.gitkeep
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# 日志与模型权重
+*.log
+*.pkl
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 本地环境
+.venv/
+venv/
+.env
